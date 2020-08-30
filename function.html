@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>React Practice</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    (() => {
+
+      // function countUp() {
+      //   alert('count up');
+      // }
+      // function countUp(color) {
+      //   alert(color);
+      // }
+      function countUp(e, color) {
+        e.preventDefault();
+        alert(color);
+      }
+
+
+      // function Counter() {
+      //   return <div>0</div>;
+      // }
+
+      // Component
+      function Counter(props) {
+        // props.color = 'red'; 値の変更はできない
+        // return <div>0 {props.color}</div>;
+
+        // return (
+        //   <li style={{backgroundColor:props.color}} onClick={countUp}>
+        //     0
+        //   </li>
+        // );
+
+        // 関数をイベントの引数に渡したい場合、無名関数をonClickに渡す必要がある。
+        // return (
+        //   <li style={{backgroundColor:props.color}} onClick={() => countUp(props.color)}>
+        //     0
+        //   </li>
+        // );
+
+        // aタグにonClickを付けたい場合、そのままだと画面遷移してしまうのでhref属性はダミーにして、
+        // onClickにイベントオブジェクトを渡して、preventDefault()で画面の遷移を防ぐことができる。
+        // アロー関数で引数が一つの場合は()を省略できる
+        return (
+          <li style={{backgroundColor:props.color}}>
+            <a href="#" onClick={e => countUp(e, props.color)}>
+              0
+            </a>
+          </li>
+        );
+      }
+
+      ReactDOM.render(
+        // <div>
+        //   <Counter/>
+        //   <Counter/>
+        //   <Counter/>
+        // </div>,
+        <div className="container">
+          <ul>
+            <Counter color="tomato"/>
+            <Counter color="skyblue"/>
+            <Counter color="limegreen"/>
+          </ul>
+        </div>,
+        document.getElementById('root')
+      );
+    })();
+  </script>
+</body>
+</html>

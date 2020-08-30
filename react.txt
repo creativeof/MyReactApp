@@ -1,0 +1,186 @@
+Resact
+コンポーネント単位で管理していくことで
+機能を拡張したり再利用したりといったことが簡単にできます。
+コンポーネントを細かく分けていくことで、
+部品の修正や再利用を簡単に行うことができる。
+
+Try React
+https://reactjs.org/docs/getting-started.html#try-react
+
+
+React Developer Tools
+ファイルの URL へのアクセスを許可する
+
+デベロッパーツール
+Command + Option + i
+ReactパネルでComponetの情報を見ることができる。
+
+React本体
+react.development.js
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+
+Reactの結果をDOMへ反映させるライブラリ
+react-dom.development.js
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+JSXやJavaScriptの新しい文法を使うためのBabelというライブラリ
+babel.min.js
+<!-- Don't use this in production: -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+
+ローカルファイルで開発する場合、
+Scriptを別ファイルにするとエラーになってしまう。
+
+JavaScriptの新しい記法
+アロー関数式
+
+
+JSX記法
+第一引数にJavaScript内にHTML的なタグを記載
+第二引数にそのUIをどこに描画するかを指定
+ReactDOM.render(
+  <p>Hello!</p>,
+  document.getElementById('root')
+);
+
+{}でJavaScriptの式が埋め込んでいくことができる。
+そのままJavascriptの命令もかける。
+
+JSXで渡せる要素は１つだけ
+複数の要素を渡したい場合は配列にするか、親要素を作る。
+必ずHTMLのタグを閉じる。(JSXはXMLが元になってる)
+const name = 'taguchi';
+ReactDOM.render(
+  <div>
+    <p>Hello! {name.toUpperCase()}</p>
+    <hr/>
+    <p>World</p>
+  </div>,
+  document.getElementById('root')
+);
+
+
+HTML属性のclassを使う場合は、JavaScriptの予約後なのでclassNameとする。
+<div className="box"></div>
+
+style形式の場合はオブジェクト形式で渡す。
+{}の中にオブジェクトなので二重かっこのような形になる。
+属性はキャメルケースで書く必要がある。
+
+<div style={{width:100, height:100, backgroundColor:'tomato'}} onClick={showMessage}></div>
+Reactでイベントを設定する場合、要素に直接onClickなどで結びつけることが多い。
+{}でJavaScriptの関数を渡す。
+
+
+ReactではComponentという独自タグを使って様々な機能を加えていくことができる。
+Componentの一文字目は必ず大文字
+ReactDOM.render(
+  <Counter/>,
+  document.getElementById('root')
+);
+
+Componentを使えば簡単に部品を再利用できる。
+ReactDOM.render(
+  <div>
+    <Counter/>
+    <Counter/>
+    <Counter/>
+  </div>,
+  document.getElementById('root')
+);
+
+Componentの内容はほとんど同じだけど少しだけ変えたい場合は属性をつける。
+自分で属性の名前をつけられる。
+<div>
+  <Counter color="tomato"/>
+  <Counter color="skyblue"/>
+  <Counter color="limegreen"/>
+</div>,
+
+属性をComponentの方で受け取るには引数を指定する。
+引数は読み取り専用の値になる。
+function Counter(props) {
+  return <div>0 {props.color}</div>;
+}
+
+onClickに関数を渡す場合
+<li style={{backgroundColor:props.color}} onClick={countUp}>
+
+onClickで指定する関数に引数に渡したい場合は無名関数をonClickに渡す必要がある。
+<li style={{backgroundColor:props.color}} onClick={() => countUp(props.color)}>
+
+
+
+Componentはclassにすることでstateの仕組みが使えるようになる。
+JSXでは直接リターンするのではなく、render()メソッドで渡す必要がある。
+（プロパティや関数はthisをつける必要がある。）
+class Counter extends React.Component {
+  render() {
+    return (
+      <li style={{backgroundColor:this.props.color}}>0</li>
+    );
+  }
+}
+
+関数の場合
+function Counter(props) {
+  return (
+    <li style={{backgroundColor:props.color}}>0</li>
+  );
+}
+
+
+stateはUIの書き換えに必要となるComponentの状態を保持するためのデータ
+constructor()で管理
+constructor()では必ず親クラスのconstructorを呼ぶようにする。(super()でpropsを渡す)
+
+
+stateはComponentが内部的に保持してる値なので、デベロッパーツールでは見ることができない。
+React Developer Tools を使う。
+デベロッパーツールにComponentsパネルが出てくる。
+SearchでComponentを検索できる。
+propsとかstateなどComponenの情報を知れる。
+
+
+Reactではthis.stateの値がセットできるのはconstructorの中だけ
+それ以外の場所ではsetStateを使う。
+ReactではUI値の変更はsetStateのみで行う。
+
+setStateが実行されるタイミングはReactが勝手に決めるので
+値が他の処理で書き換わってしまう場合もある。
+
+setStateではprevStateで直前の値が取得できる。
+
+ReactではsetStateするたびにrender()が呼ばれ、
+それによって新しい値でUIが再描画される仕組みになってる。
+
+
+JavaScriptの仕様で関数をカッコなしで呼ぶとメソッドの中では
+thisがundefinedになってしまう。
+constructorで関数にそのclass自体(this)をbindする必要がある。
+
+
+Reactではstateを持つComponentは最小限(App Component)にして、
+その他のComponentには極力値を持たせない設計が良いとされている。
+
+
+ReactではComponent単位で管理していくことで機能を拡張したり
+再利用したりということが簡単にできる。
+Componentを細かく分けていくことで部品の修正や再利用が簡単にできる。
+
+
+ReactにはLifecycleが定義されていて、
+様々なタイミングで指定した処理を挟み込むことができる。
+componentDidUpdate()
+コンポーネントが更新されDOMが一新された直後に実行される。 初期描画では呼び出されない。
+componentDidMount()
+コンポーネントがマウント(配置)された直後に実行される。
+DOMに関わる初期化処理を行いたい時に便利
+
+
+JSXではタブの前後の空白が削除されてしまう。（CSSでマージンをつける）
+
+CSS3
+要素が増えてきた時に折り返す、flex-wrap: wrap;にする。
+user-select: none; 連打した時にテキストが選択されない

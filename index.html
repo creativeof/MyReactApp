@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>React Practice</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    (() => {
+      // Reactではstateを持つComponentは最小限にして、
+      // その他のComponentには極力値を持たせない設計が良いとされている。
+
+      // Counterはclassである必要がないので関数で表現する
+      // stateを変更できるのはApp Componentだけなので、どんどん親要素にイベント処理を渡していく。
+      // 親要素(CounterList)にcountUp属性をつけて、props.counterを渡す
+      function Counter(props) {
+        return (
+          <li style={{backgroundColor:props.counter.color}} onClick={() => props.countUp(props.counter)}>
+            {props.counter.id}-({props.counter.count})
+          </li>
+        );
+      }
+
+      // stateを持たせないのでfunctionで作成
+      function CounterList(props) {
+        // mapで配列を処理してループさせる
+        // ループで処理する要素にはkeyにユニークな値をつける
+        // こちらでstateを変更できないので、親要素(App)のpropsにcountUpの属性をつける
+        const counters = props.counters.map(counter => {
+          return (
+            <Counter
+              counter={counter}
+              key={counter.id}
+              countUp={props.countUp}
+            />
+          )
+        });
+
+        return (
+          <ul>
+            {counters}
+          </ul>
+        );
+      }
+
+      class App extends React.Component {
+        // propsは渡されないので不要
+        constructor() {
+          super();
+          // Counterの情報はApp Componentのstateで一元管理
+          this.state = {
+            counters: [
+              {id: 'A', count: 0, color: 'tomato'},
+              {id: 'B', count: 0, color: 'skyblue'},
+              {id: 'C', count: 0, color: 'limegreen'},
+              {id: 'D', count: 0, color: 'gray'},
+              {id: 'E', count: 0, color: 'pink'}
+            ],
+            total: 0
+          }
+          // countUpメソッドにthisをbindすれば、thisがundefinedにならない
+          this.countUp = this.countUp.bind(this);
+        }
+
+        countUp(counter) {
+          // カウントアップの処理なのでprevStateを使って処理する
+          this.setState(prevState => {
+            // prevStateの値を使ってcountersのコピーを作成
+            const counters = prevState.counters.map(counter => {
+              return {id: counter.id, count: counter.count, color: counter.color}
+            });
+
+            // indexOf(counter.id)で渡ってきたcounterが何番目かを調べる
+            const pos = counters.map(counter => {
+              return counter.id;
+            }).indexOf(counter.id);
+
+            counters[pos].count++;
+
+            return {
+              counters: counters,
+              total: prevState.total + 1
+            }
+          })
+        }
+
+        render() {
+          return (
+            // <div className="container">
+            //   <ul>
+            //     <Counter counter={this.state.counters[0]}/>
+            //     <Counter counter={this.state.counters[1]}/>
+            //     <Counter counter={this.state.counters[2]}/>
+            //   </ul>
+            //   <div>TOTAL INVENTORY: 3</div>
+            // </div>
+            <div className="container">
+              <ul>
+                <CounterList
+                  counters={this.state.counters}
+                  countUp={this.countUp}
+                />
+              </ul>
+              <div>TOTAL INVENTORY: {this.state.total}</div>
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(
+        <App/>,
+        document.getElementById('root')
+      );
+    })();
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>
